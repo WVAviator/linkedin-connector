@@ -19,6 +19,7 @@ const initPuppeteer = async () => {
 };
 
 const prepareArray = (linkedinArr) => {
+  let userCleanStr;
   // clean all elements, specialize the first
   const newArr = linkedinArr.map((linkStr, i) => {
     // if string is www, add https://
@@ -32,14 +33,18 @@ const prepareArray = (linkedinArr) => {
     const user = splitStr[splitStr.length - 1];
 
     // if first link, create link to sign in. else, use clean string
-    return i === 0
-      ? 'https://www.linkedin.com/checkpoint/rm/sign-in-another-account?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fin%2F' +
+    if (i === 0) {
+      userCleanStr = cleanStr;
+      return (
+        'https://www.linkedin.com/checkpoint/rm/sign-in-another-account?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Fin%2F' +
           user +
           '&fromSignIn=true'
-      : cleanStr;
+      );
+    }
+    return cleanStr;
   });
 
-  return newArr;
+  return newArr.filter((cleanStr) => cleanStr !== userCleanStr);
 };
 
 const connectAndEndorse = async (browser, link, iter) => {
